@@ -48,6 +48,10 @@ class Notification:
     def status(self) -> NotificationStatus:
         return self.__status
 
+    @property
+    def updated_at(self) -> datetime:
+        return self.__updated_at
+
     def set_in_progress(self) -> None:
         if self.__status != NotificationStatus.PENDING:
             raise NotificationInvalidStatus
@@ -70,8 +74,8 @@ class Notification:
             "message": self.__message.body,
             "status": self.__status.value,
             "notification_id": self.__notification_id,
-            "created_at": self.__created_at,
-            "updated_at": self.__updated_at,
+            "created_at": str(self.__created_at),
+            "updated_at": str(self.__updated_at),
         }
 
     def __check_in_progress(self):
