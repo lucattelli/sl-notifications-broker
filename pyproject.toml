@@ -1,0 +1,16 @@
+[tool.black]
+line-length = 80
+
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 80
+known_local_folder = ["sl_notifications_broker","tests"]
+
+[tool.pylint.format]
+max-line-length = 80
+
+
+[tool.pylint.messages_control]
+disable = ["missing-module-docstring", "missing-class-docstring", "missing-function-docstring"]
