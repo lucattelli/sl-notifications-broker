@@ -55,19 +55,31 @@ class SecondLifeNotificationCreatedEvent(Message):
         )
 
 
+class EventFactory:
+    @staticmethod
+    def notification_created_factory(
+        notification: Notification,
+    ) -> SecondLifeNotificationCreatedEvent:
+        return SecondLifeNotificationCreatedEvent.factory(
+            notification=notification
+        )
+
+
 class CreateNotification:
     def __init__(
         self,
         notification_repository: NotificationRepositoryPort,
         message_bus: MessageBusPort,
+        event_factory: EventFactory,
     ):
         self.__notification_repository = notification_repository
         self.__message_bus = message_bus
+        self.__event_factory = event_factory
 
     def __call__(self, notification: Notification) -> None:
         self.__notification_repository.insert(notification=notification)
-        self.__message_bus.publish(
-            message=SecondLifeNotificationCreatedEvent.factory(
-                notification=notification
-            )
+
+        event = self.__event_factory.notification_created_factory(
+            notification=notification
         )
+        self.__message_bus.publish(message=event)
