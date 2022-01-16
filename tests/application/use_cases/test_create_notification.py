@@ -3,7 +3,9 @@ from unittest.mock import Mock
 
 from sl_notifications_broker.application.use_cases.create_notification import (
     CreateNotification,
-    SecondLifeNotificationCreatedEvent,
+)
+from sl_notifications_broker.domain.events.notification_created_event import (
+    NotificationCreatedEvent,
 )
 from tests.fixtures.domain.notification_fixture import get_notification_fixture
 
@@ -15,10 +17,8 @@ class TestCreateNotification(TestCase):
         self.notification_repository_mock = Mock()
         self.message_bus_mock = Mock()
         self.event_factory_mock = Mock()
-        self.notification_created_event = (
-            SecondLifeNotificationCreatedEvent.factory(
-                notification=self.notification
-            )
+        self.notification_created_event = NotificationCreatedEvent.factory(
+            notification=self.notification
         )
         self.event_factory_mock.notification_created_factory.return_value = (
             self.notification_created_event
