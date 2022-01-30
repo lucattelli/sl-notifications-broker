@@ -29,3 +29,9 @@ class MessageBusPort(ABC):
     @abstractmethod
     def publish(self, message: Message) -> None:
         pass
+
+
+class MessageHandler(ABC):
+    @abstractmethod
+    def handle(self, message: Message) -> None:
+        pass
