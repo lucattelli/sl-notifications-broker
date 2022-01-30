@@ -7,3 +7,7 @@ class NotificationRepositoryPort(ABC):
     @abstractmethod
     def insert(self, notification: Notification) -> None:
         pass
+
+    @abstractmethod
+    def update(self, notification: Notification) -> None:
+        pass
