@@ -52,17 +52,29 @@ class Notification:
     def updated_at(self) -> datetime:
         return self.__updated_at
 
+    @property
+    def is_pending(self) -> bool:
+        return self.__status == NotificationStatus.PENDING
+
+    @property
+    def is_successful(self) -> bool:
+        return self.__status == NotificationStatus.SUCCESS
+
+    @property
+    def is_in_progress(self) -> bool:
+        return self.__status == NotificationStatus.IN_PROGRESS
+
     def set_in_progress(self) -> None:
         if self.__status != NotificationStatus.PENDING:
             raise NotificationInvalidStatus
         self.__set_status(status=NotificationStatus.IN_PROGRESS)
 
     def set_success(self) -> None:
-        self.__check_in_progress()
+        self.__assert_in_progress()
         self.__set_status(status=NotificationStatus.SUCCESS)
 
     def set_failed(self) -> None:
-        self.__check_in_progress()
+        self.__assert_in_progress()
         self.__set_status(status=NotificationStatus.FAILED)
 
     def as_dict(self) -> Dict:
@@ -78,8 +90,8 @@ class Notification:
             "updated_at": str(self.__updated_at),
         }
 
-    def __check_in_progress(self):
-        if self.__status != NotificationStatus.IN_PROGRESS:
+    def __assert_in_progress(self):
+        if not self.is_in_progress:
             raise NotificationInvalidStatus
 
     def __set_status(self, status: NotificationStatus) -> None:

@@ -31,6 +31,40 @@ class TestNotification(TestCase):
         )
         return super().setUp()
 
+    def test_is_pending_when_status_is_not_pending(self):
+        self.notification.set_in_progress()
+        expected = False
+        actual = self.notification.is_pending
+        self.assertEqual(expected, actual)
+
+    def test_is_pending_when_status_is_pending(self):
+        expected = True
+        actual = self.notification.is_pending
+        self.assertEqual(expected, actual)
+
+    def test_is_successful_when_status_is_not_success(self):
+        expected = False
+        actual = self.notification.is_successful
+        self.assertEqual(expected, actual)
+
+    def test_is_successful_when_status_is_success(self):
+        self.notification.set_in_progress()
+        self.notification.set_success()
+        expected = True
+        actual = self.notification.is_successful
+        self.assertEqual(expected, actual)
+
+    def test_is_in_progress_when_status_is_not_in_progress(self):
+        expected = False
+        actual = self.notification.is_in_progress
+        self.assertEqual(expected, actual)
+
+    def test_is_in_progress_when_status_is_in_progress(self):
+        self.notification.set_in_progress()
+        expected = True
+        actual = self.notification.is_in_progress
+        self.assertEqual(expected, actual)
+
     def test_set_in_progress_when_status_is_pending(self):
         self.notification.set_in_progress()
 
