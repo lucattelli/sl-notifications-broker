@@ -1,8 +1,8 @@
+from dataclasses import dataclass
+from datetime import datetime
+from enum import Enum
 from typing import Dict, Optional
 from uuid import UUID, uuid4
-from dataclasses import dataclass
-from enum import Enum
-from datetime import datetime
 
 
 @dataclass(frozen=True)
@@ -45,12 +45,28 @@ class Notification:
         self.__updated_at: datetime = updated_at or self.__created_at
 
     @property
-    def status(self) -> NotificationStatus:
-        return self.__status
+    def id(self) -> UUID:
+        return self.__notification_id
+
+    @property
+    def created_at(self) -> datetime:
+        return self.__created_at
 
     @property
     def updated_at(self) -> datetime:
         return self.__updated_at
+
+    @property
+    def message(self) -> NotificationMessage:
+        return self.__message
+
+    @property
+    def to(self) -> SecondLifeUser:
+        return self.__send_to
+
+    @property
+    def status(self) -> NotificationStatus:
+        return self.__status
 
     @property
     def is_pending(self) -> bool:
@@ -90,6 +106,32 @@ class Notification:
             "updated_at": str(self.__updated_at),
         }
 
+    @staticmethod
+    def from_dict(data: Dict):
+        return Notification(
+            send_to=SecondLifeUser(
+                second_life_username=data["send_to"]["second_life_username"],
+                second_life_uuid=data["send_to"]["second_life_uuid"],
+            ),
+            message=NotificationMessage(body=data["message"]),
+            status=NotificationStatus(data["status"])
+            if data.get("status")
+            else None,
+            notification_id=data["notification_id"]
+            if data.get("notification_id")
+            else None,
+            created_at=datetime.strptime(
+                data["created_at"], "%Y-%m-%d %H:%M:%S.%f"
+            )
+            if data.get("created_at")
+            else None,
+            updated_at=datetime.strptime(
+                data["updated_at"], "%Y-%m-%d %H:%M:%S.%f"
+            )
+            if data.get("updated_at")
+            else None,
+        )
+
     def __assert_in_progress(self):
         if not self.is_in_progress:
             raise NotificationInvalidStatus
@@ -97,3 +139,7 @@ class Notification:
     def __set_status(self, status: NotificationStatus) -> None:
         self.__status = status
         self.__updated_at = datetime.now()
+
+
+    def __eq__(self, other) -> bool:
+        return self.id == other.id

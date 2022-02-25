@@ -113,18 +113,43 @@ class TestNotification(TestCase):
         self.assertEqual(NotificationStatus.PENDING, self.notification.status)
         self.assertEqual(self.updated_at, self.notification.updated_at)
 
-    def test_as_dict(self):
-        expected = {
-            "send_to": {
-                "second_life_uuid": self.send_to.second_life_uuid,
-                "second_life_username": self.send_to.second_life_username,
-            },
-            "message": self.message.body,
-            "status": NotificationStatus.PENDING.value,
-            "notification_id": self.notification_id,
-            "created_at": str(self.created_at),
-            "updated_at": str(self.updated_at),
+    def test_as_dict_when_called(self):
+        send_to = {
+            "second_life_username": self.notification.to.second_life_username,
+            "second_life_uuid": self.notification.to.second_life_uuid,
         }
+        expected = {
+            "created_at": str(self.notification.created_at),
+            "message": self.notification.message.body,
+            "notification_id": self.notification.id,
+            "send_to": send_to,
+            "status": self.notification.status.value,
+            "updated_at": str(self.notification.updated_at),
+        }
+
         actual = self.notification.as_dict()
 
         self.assertEqual(expected, actual)
+
+    def test_from_dict_when_called(self):
+        expected = self.notification
+
+        send_to = {
+            "second_life_username": self.notification.to.second_life_username,
+            "second_life_uuid": self.notification.to.second_life_uuid,
+        }
+        data = {
+            "created_at": str(self.notification.created_at),
+            "message": self.notification.message.body,
+            "notification_id": self.notification.id,
+            "send_to": send_to,
+            "status": self.notification.status.value,
+            "updated_at": str(self.notification.updated_at),
+        }
+        actual = Notification.from_dict(data=data)
+
+        self.assertEqual(expected, actual)
+
+        expected_dict = expected.__dict__
+        actual_dict = actual.__dict__
+        self.assertDictEqual(expected_dict, actual_dict)
